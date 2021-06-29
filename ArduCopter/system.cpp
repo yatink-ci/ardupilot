@@ -1,5 +1,6 @@
 #include "Copter.h"
 #include <AP_ESC_Telem/AP_ESC_Telem.h>
+#include <AP_HAL_ChibiOS/hwdef/common/flash.h>
 
 /*****************************************************************************
 *   The init_ardupilot function processes everything we need for an in - air restart
@@ -210,6 +211,13 @@ void Copter::init_ardupilot()
 
     // flag that initialisation has completed
     ap.initialised = true;
+    
+    char mystr[12]= "Hello World";
+    gcs().send_text(MAV_SEVERITY_INFO, "Flashing String");
+    while(!stm32_flash_write(0x081E0000, mystr, 12)){
+        hal.scheduler->delay(1);
+    }
+    gcs().send_text(MAV_SEVERITY_INFO, "Flashing String Complete");
 }
 
 
